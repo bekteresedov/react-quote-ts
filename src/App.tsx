@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface Data {
+  text: string;
+  author: string;
 }
+const App: React.FC = () => {
+  const [quote, setQuote] = useState<Data>();
+
+  const getData = (): void => {
+    fetch("https://type.fit/api/quotes")
+      .then((response) => response.json())
+      .then((data) => {
+        let index: number = Math.floor(Math.random() * data.length);
+        setQuote(data[index]);
+      })
+      .catch((error) => console.log(error));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <React.Fragment>
+      <div>
+        <p>{quote?.text}</p>
+        <span>Author: {quote?.author}</span>
+        <button onClick={() => getData()}>Get Quote</button>
+      </div>
+    </React.Fragment>
+  );
+};
 
 export default App;
